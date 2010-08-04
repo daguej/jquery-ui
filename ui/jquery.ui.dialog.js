@@ -537,6 +537,9 @@ $.widget("ui.dialog", {
 				uiDialog
 					.removeClass(self.options.dialogClass)
 					.addClass(uiDialogClasses + value);
+				self.overlay.$el
+					.removeClass(self.options.dialogClass)
+					.addClass(value);
 				break;
 			case "disabled":
 				if (value) {
@@ -712,12 +715,15 @@ $.extend($.ui.dialog.overlay, {
 			$(window).bind('resize.dialog-overlay', $.ui.dialog.overlay.resize);
 		}
 
-		var $el = (this.oldInstances.pop() || $('<div></div>').addClass('ui-widget-overlay'))
+		var $el = (this.oldInstances.pop() || $('<div></div>'))
+			.attr('class','ui-widget-overlay') // clears old classes if this is a reused overlay
 			.appendTo(document.body)
 			.css({
 				width: this.width(),
 				height: this.height()
 			});
+			
+		if (dialog.options.dialogClass) $el.addClass(dialog.options.dialogClass);
 
 		if ($.fn.bgiframe) {
 			$el.bgiframe();
